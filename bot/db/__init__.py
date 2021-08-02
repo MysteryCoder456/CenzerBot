@@ -7,7 +7,7 @@ from .models import Base
 uri = os.environ["DB_URI"]
 engine = create_engine(uri)
 
-# Creates tables
+# Create tables
 Base.metadata.create_all(bind=engine)
 
 # Create session
