@@ -1,0 +1,4 @@
+discord.py
+discord-components
+discord-ext-prettyhelp
+python-dotenv
