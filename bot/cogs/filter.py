@@ -17,7 +17,12 @@ class Filter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        pass
+        channel: discord.TextChannel = message.channel
+        message_split: List[str] = message.content.split()
+
+        for word in message_split:
+            if word in self.profanity_words:
+                await channel.send("omg bad word :o")
 
 
 def setup(bot: commands.Bot):

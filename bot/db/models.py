@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, JSON
+from sqlalchemy import Column, Integer, Boolean, JSON, Text
 from sqlalchemy.ext.declarative import declarative_base
 
 # Base class which all models derive from
@@ -14,3 +14,13 @@ class Options(Base):
 
     def __repr__(self) -> str:
         return f"Options(guild_id={self.guild_id})"
+
+
+class Webhooks(Base):
+    __tablename__ = "webhooks"
+
+    channel_id = Column("channel_id", Integer, primary_key=True)
+    url = Column("url", Text, nullable=False)
+
+    def __repr__(self) -> str:
+        return f"Webhook(channel={self.channel_id}, url={self.url})"
