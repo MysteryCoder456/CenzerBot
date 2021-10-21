@@ -29,8 +29,19 @@ async def on_ready():
     print(f"Logged in as {bot.user} in {guild_count} guilds")
 
 
+def load_cogs():
+    for filename in os.listdir("bot/cogs"):
+        if filename.endswith(".py"):
+            cog_name = filename[:-3]
+            bot.load_extension(f"bot.cogs.{cog_name}")
+            print(f"Finished loading {cog_name} cog")
+
+    print("All cogs loaded!")
+
+
 def main():
     try:
+        load_cogs()
         bot.run(TOKEN)
     except KeyboardInterrupt:
         pass

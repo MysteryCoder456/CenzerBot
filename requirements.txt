@@ -1,5 +1,8 @@
-discord.py
-discord-components
+py-cord
 discord-ext-prettyhelp
 python-dotenv
 sqlalchemy
+requests
+profanity-filter[deep-analysis]
+git+https://github.com/rominf/hunspell_serializable@49c00fabf94cacf9e6a23a0cd666aac10cb1d491#egg=hunspell_serializable
+git+https://github.com/rominf/pyffs@6c805fbfd7771727138b169b32484b53c0b0fad1#egg=pyffs
