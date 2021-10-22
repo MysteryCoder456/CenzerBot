@@ -3,6 +3,8 @@ import requests
 import discord
 from discord.ext import commands
 
+from bot import db
+
 
 class Filter(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -21,10 +23,17 @@ class Filter(commands.Cog):
             return
 
         channel: discord.TextChannel = message.channel
+        guild_id: int = channel.guild.id
+        guild_options = db.get_guild_options(guild_id)
+
+        if not guild_options.enabled:
+            return
+
         message_split: List[str] = message.content.split()
-        filter_character = "-"
+        filter_character = guild_options.censor_char
         clean_sentence_list = []
 
+        # Replacing profanities with the censor character
         for word in message_split:
             clean_word = word
             for profanity in self.profanity_words:
