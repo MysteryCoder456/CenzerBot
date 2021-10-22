@@ -1,4 +1,3 @@
-from typing import List
 import requests
 import discord
 from discord.ext import commands
@@ -15,7 +14,7 @@ class Filter(commands.Cog):
         words_request = requests.get(
             "https://github.com/RobertJGabriel/Google-profanity-words/raw/master/list.txt"
         )
-        self.profanity_words: List[str] = words_request.text.splitlines()
+        self.profanity_words = words_request.text.splitlines()
         print("Fetched profanities 😉")
 
     async def get_channel_webhook(self, channel: discord.TextChannel) -> discord.Webhook:
