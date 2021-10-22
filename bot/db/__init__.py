@@ -15,7 +15,7 @@ Base.metadata.create_all(bind=engine)
 def get_guild_options(guild_id: int) -> Options:
     guild_options: Options
 
-    with Session(engine) as session:
+    with Session(engine) as session:  # type: ignore
         guild_options = session.query(Options).filter_by(id=guild_id).scalar()
 
         if guild_options is None:
