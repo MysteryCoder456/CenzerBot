@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, Boolean, JSON, Text, CHAR
+from sqlalchemy import Column, Integer, Boolean, JSON, Text, CHAR, Enum
 from sqlalchemy.ext.declarative import declarative_base
+
+from bot.enums import CensorMode
 
 # Base class which all models derive from
 Base = declarative_base()
@@ -11,7 +13,12 @@ class Options(Base):
     id = Column("id", Integer, primary_key=True)  # Guild ID
     enabled = Column("enabled", Boolean, default=True, nullable=False)
     censor_char = Column("censor_char", CHAR, default="-", nullable=False)
-    hard_censor = Column("hard_censor", Boolean, default=False, nullable=False)
+    censor_mode = Column(
+        "censor_mode",
+        Enum(CensorMode),
+        default=CensorMode.normal,
+        nullable=False,
+    )
     whitelist = Column("whitelist", JSON, default=[], nullable=False)
 
     def __repr__(self) -> str:

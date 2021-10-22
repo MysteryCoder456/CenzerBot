@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 
 from bot import db
+from bot.enums import CensorMode
 
 
 class Filter(commands.Cog):
@@ -19,30 +20,51 @@ class Filter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if message.author == self.bot.user:
+        if message.author.bot:  # type: ignore
             return
 
         channel: discord.TextChannel = message.channel
         guild_id: int = channel.guild.id
-        guild_options = db.get_guild_options(guild_id)
+        options = db.get_guild_options(guild_id)
 
-        if not guild_options.enabled:
+        if not options.enabled:
             return
 
-        message_split: List[str] = message.content.split()
-        censor_char = guild_options.censor_char
-        clean_sentence_list = []
+        match options.censor_mode:
+            # Replacing profanities with the censor character
+            case CensorMode.normal:
+                # TODO: Use webhooks to send censored version
+                clean_sentence_list = []
 
-        # Replacing profanities with the censor character
-        for word in message_split:
-            clean_word = word
-            for profanity in self.profanity_words:
-                if profanity in word:
-                    clean_word = censor_char * len(word)
-            clean_sentence_list.append(clean_word)
+                for word in message.content.split():
+                    clean_word = word
+                    for profanity in self.profanity_words:
+                        if profanity in word:
+                            clean_word = options.censor_char * len(word)
+                    clean_sentence_list.append(clean_word)
 
-        clean_sentence = " ".join(clean_sentence_list)
-        await channel.send(f"Clean sentence: {clean_sentence}")
+                clean_sentence = " ".join(clean_sentence_list)
+                await channel.send(f"Clean sentence: {clean_sentence}")
+
+            # Deleting messages that contain any profanities
+            case CensorMode.delete:
+                contain_profanity = False
+
+                for word in message.content.split():
+                    for profanity in self.profanity_words:
+                        if profanity in word:
+                            contain_profanity = True
+                            break
+                    if contain_profanity:
+                        break
+
+                if contain_profanity:
+                    await message.delete()
+
+            # Wrap profanities in spoiler tags
+            case CensorMode.spoiler:
+                # TODO: Make this
+                pass
 
 
 def setup(bot: commands.Bot):
