@@ -17,12 +17,23 @@ class Filter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+        if message.author == self.bot.user:
+            return
+
         channel: discord.TextChannel = message.channel
         message_split: List[str] = message.content.split()
+        filter_character = "-"
+        clean_sentence_list = []
 
         for word in message_split:
-            if word in self.profanity_words:
-                await channel.send("omg bad word :o")
+            clean_word = word
+            for profanity in self.profanity_words:
+                if profanity in word:
+                    clean_word = filter_character * len(word)
+            clean_sentence_list.append(clean_word)
+
+        clean_sentence = " ".join(clean_sentence_list)
+        await channel.send(f"Clean sentence: {clean_sentence}")
 
 
 def setup(bot: commands.Bot):
