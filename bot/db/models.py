@@ -23,13 +23,3 @@ class Options(Base):
 
     def __repr__(self) -> str:
         return f"Options(guild_id={self.guild_id})"
-
-
-class Webhooks(Base):
-    __tablename__ = "webhooks"
-
-    id = Column("id", Integer, primary_key=True)  # Channel ID
-    url = Column("url", Text, nullable=False)
-
-    def __repr__(self) -> str:
-        return f"Webhook(channel={self.channel_id}, url={self.url})"
