@@ -30,7 +30,7 @@ class Filter(commands.Cog):
             return
 
         message_split: List[str] = message.content.split()
-        filter_character = guild_options.censor_char
+        censor_char = guild_options.censor_char
         clean_sentence_list = []
 
         # Replacing profanities with the censor character
@@ -38,7 +38,7 @@ class Filter(commands.Cog):
             clean_word = word
             for profanity in self.profanity_words:
                 if profanity in word:
-                    clean_word = filter_character * len(word)
+                    clean_word = censor_char * len(word)
             clean_sentence_list.append(clean_word)
 
         clean_sentence = " ".join(clean_sentence_list)
