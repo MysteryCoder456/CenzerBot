@@ -18,6 +18,15 @@ class Filter(commands.Cog):
         self.profanity_words: List[str] = words_request.text.splitlines()
         print("Fetched profanities 😉")
 
+    async def get_channel_webhook(self, channel: discord.TextChannel) -> discord.Webhook:
+        channel_webhooks = await channel.webhooks()
+        bot_webhook: discord.Webhook | None = discord.utils.get(channel_webhooks, user=self.bot.user)
+
+        if bot_webhook is None:
+            bot_webhook = await channel.create_webhook(name=f"Cenzer Webhook", reason="Used to replace profanity messages with censored ones")
+
+        return bot_webhook
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.author.bot:  # type: ignore
@@ -33,32 +42,39 @@ class Filter(commands.Cog):
         match options.censor_mode:
             # Replacing profanities with the censor character
             case CensorMode.normal:
-                # TODO: Use webhooks to send censored version
+                channel_webhook = await self.get_channel_webhook(channel)
                 clean_sentence_list = []
+                contains_profanity = False
 
                 for word in message.content.split():
                     clean_word = word
                     for profanity in self.profanity_words:
-                        if profanity in word:
+                        if profanity in word.lower():
+                            contains_profanity = True
                             clean_word = options.censor_char * len(word)
                     clean_sentence_list.append(clean_word)
 
-                clean_sentence = " ".join(clean_sentence_list)
-                await channel.send(f"Clean sentence: {clean_sentence}")
+                if contains_profanity:
+                    clean_sentence = " ".join(clean_sentence_list)
+                    name = message.author.display_name
+                    avatar = message.author.avatar_url  # type: ignore
+
+                    await message.delete()
+                    await channel_webhook.send(clean_sentence, username=name, avatar_url=avatar)
 
             # Deleting messages that contain any profanities
             case CensorMode.delete:
-                contain_profanity = False
+                contains_profanity = False
 
                 for word in message.content.split():
                     for profanity in self.profanity_words:
-                        if profanity in word:
-                            contain_profanity = True
+                        if profanity in word.lower():
+                            contains_profanity = True
                             break
-                    if contain_profanity:
+                    if contains_profanity:
                         break
 
-                if contain_profanity:
+                if contains_profanity:
                     await message.delete()
 
             # Wrap profanities in spoiler tags
