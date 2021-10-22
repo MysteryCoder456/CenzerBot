@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 
 from bot.db.models import Base, Options
 
@@ -11,14 +11,11 @@ engine = create_engine(uri)
 # Create tables
 Base.metadata.create_all(bind=engine)
 
-# Session factory
-Session = sessionmaker(bind=engine)
-
 
 def get_guild_options(guild_id: int) -> Options:
     guild_options: Options
 
-    with Session() as session:
+    with Session(engine) as session:
         guild_options = session.query(Options).filter_by(id=guild_id).scalar()
 
         if guild_options is None:
@@ -26,6 +23,8 @@ def get_guild_options(guild_id: int) -> Options:
             session.add(new_options)
             session.commit()
 
-            guild_options = session.query(Options).filter_by(id=guild_id).scalar()
+            guild_options = (
+                session.query(Options).filter_by(id=guild_id).scalar()
+            )
 
     return guild_options
