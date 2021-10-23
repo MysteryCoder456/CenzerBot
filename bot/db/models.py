@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, JSON, Text, CHAR, Enum
+from sqlalchemy import Column, Integer, Boolean, JSON, CHAR, Enum
 from sqlalchemy.ext.declarative import declarative_base
 
 from bot.enums import CensorMode
