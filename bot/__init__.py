@@ -13,6 +13,8 @@ def get_prefix(client: commands.Bot, message: discord.Message) -> str:
     return "c."
 
 
+intents = discord.Intents.default()
+intents.members = True
 bot = commands.Bot(
     command_prefix=get_prefix,
     description=(
@@ -20,6 +22,7 @@ bot = commands.Bot(
         "sentences without deleting your messages."
     ),
     help_command=PrettyHelp(color=discord.Color.red()),
+    intents=intents,
 )
 
 

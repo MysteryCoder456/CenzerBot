@@ -1,5 +1,6 @@
 import requests
 import discord
+from discord import TextChannel, Webhook, Message
 from discord.ext import commands
 
 from bot import db
@@ -12,26 +13,33 @@ class Filter(commands.Cog):
 
         # Fetch profanity list
         words_request = requests.get(
-            "https://github.com/RobertJGabriel/Google-profanity-words/raw/master/list.txt"
+            "https://github.com/RobertJGabriel/Google-profanity-words"
+            "/raw/master/list.txt"
         )
         self.profanity_words = words_request.text.splitlines()
         print("Fetched profanities 😉")
 
-    async def get_channel_webhook(self, channel: discord.TextChannel) -> discord.Webhook:
+    async def get_channel_webhook(self, channel: TextChannel) -> Webhook:
         channel_webhooks = await channel.webhooks()
-        bot_webhook: discord.Webhook | None = discord.utils.get(channel_webhooks, user=self.bot.user)
+        bot_webhook: discord.Webhook | None = discord.utils.get(
+            channel_webhooks,
+            user=self.bot.user,
+        )
 
         if bot_webhook is None:
-            bot_webhook = await channel.create_webhook(name=f"Cenzer Webhook", reason="Used to replace profanity messages with censored ones")
+            bot_webhook = await channel.create_webhook(
+                name="Cenzer Webhook",
+                reason="Used to replace profanity messages with censored ones",
+            )
 
         return bot_webhook
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: Message):
         if message.author.bot:  # type: ignore
             return
 
-        channel: discord.TextChannel = message.channel
+        channel: TextChannel = message.channel
         guild_id: int = channel.guild.id
         options = db.get_guild_options(guild_id)
 
@@ -59,7 +67,11 @@ class Filter(commands.Cog):
                     avatar = message.author.avatar_url  # type: ignore
 
                     await message.delete()
-                    await channel_webhook.send(clean_sentence, username=name, avatar_url=avatar)
+                    await channel_webhook.send(
+                        clean_sentence,
+                        username=name,
+                        avatar_url=avatar,
+                    )
 
             # Deleting messages that contain any profanities
             case CensorMode.delete:
