@@ -1,30 +1,36 @@
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from bot.db.models import Base, Options
 
 # SQLAlchemy Engine
+load_dotenv()
 uri = os.environ["DB_URI"]
-engine = create_engine(uri)
-
-# Create tables
-Base.metadata.create_all(bind=engine)
+engine = create_async_engine(uri)
 
 
-def get_guild_options(guild_id: int) -> Options:
+async def init_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+async def close():
+    await engine.dispose()
+
+
+async def get_guild_options(guild_id: int) -> Options:
     guild_options: Options
 
-    with Session(engine) as session:  # type: ignore
-        guild_options = session.query(Options).filter_by(id=guild_id).scalar()
+    async with AsyncSession(engine) as session:
+        guild_options = await session.get(Options, guild_id)
 
         if guild_options is None:
             new_options = Options(id=guild_id)
             session.add(new_options)
-            session.commit()
+            await session.commit()
 
-            guild_options = (
-                session.query(Options).filter_by(id=guild_id).scalar()
-            )
+            guild_options = await session.get(Options, guild_id)
 
     return guild_options

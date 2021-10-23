@@ -1,5 +1,6 @@
 py-cord
 discord-ext-prettyhelp
 python-dotenv
-sqlalchemy
+sqlalchemy[asyncio]
 requests
+aiosqlite

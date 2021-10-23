@@ -36,12 +36,12 @@ class Filter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: Message):
-        if message.author.bot:  # type: ignore
+        if message.author.bot:
             return
 
         channel: TextChannel = message.channel
         guild_id: int = channel.guild.id
-        options = db.get_guild_options(guild_id)
+        options = await db.get_guild_options(guild_id)
 
         if not options.enabled:
             return
@@ -67,7 +67,7 @@ class Filter(commands.Cog):
                     channel_webhook = await self.get_channel_webhook(channel)
                     clean_sentence = " ".join(clean_sentence_list)
                     name = message.author.display_name
-                    avatar = message.author.avatar_url  # type: ignore
+                    avatar = message.author.avatar_url
 
                     await message.delete()
                     await channel_webhook.send(
@@ -112,7 +112,7 @@ class Filter(commands.Cog):
                     channel_webhook = await self.get_channel_webhook(channel)
                     clean_sentence = " ".join(clean_sentence_list)
                     name = message.author.display_name
-                    avatar = message.author.avatar_url  # type: ignore
+                    avatar = message.author.avatar_url
 
                     await message.delete()
                     await channel_webhook.send(

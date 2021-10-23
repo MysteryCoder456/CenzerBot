@@ -1,8 +1,11 @@
+import asyncio
 import os
 import discord
 from discord.ext import commands
 from discord.ext.prettyhelp import PrettyHelp
 from dotenv import load_dotenv
+
+from bot import db
 
 load_dotenv()
 TOKEN = os.environ["TOKEN"]
@@ -42,12 +45,17 @@ def load_cogs():
 
 
 def main():
+    loop = asyncio.get_event_loop()
     try:
         load_cogs()
-        bot.run(TOKEN)
+        loop.run_until_complete(db.init_tables())
+        loop.run_until_complete(bot.start(TOKEN))
     except KeyboardInterrupt:
         pass
     except SystemExit:
         pass
     finally:
+        loop.run_until_complete(bot.close())
+        loop.run_until_complete(db.close())
+        loop.close()
         print("Stopping...")
