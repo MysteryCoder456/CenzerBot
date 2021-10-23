@@ -1,3 +1,4 @@
+from typing import Any
 from sqlalchemy import Column, Integer, Boolean, JSON, CHAR, Enum
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -23,3 +24,6 @@ class Options(Base):
 
     def __repr__(self) -> str:
         return f"Options(guild_id={self.guild_id})"
+
+    def set(self, column: str, value: Any):
+        self.__setattr__(column, value)

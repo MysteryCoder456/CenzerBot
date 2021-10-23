@@ -9,6 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "run.py",
+            "args": ["--debug"],
             "console": "integratedTerminal"
         }
     ]

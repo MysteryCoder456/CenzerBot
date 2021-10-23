@@ -1,8 +1,8 @@
-import asyncio
 import os
+import sys
+import asyncio
 import discord
 from discord.ext import commands
-from discord.ext.prettyhelp import PrettyHelp
 from dotenv import load_dotenv
 
 from bot import db
@@ -11,19 +11,17 @@ load_dotenv()
 TOKEN = os.environ["TOKEN"]
 
 
-def get_prefix(client: commands.Bot, message: discord.Message) -> str:
-    # TODO: implement custom prefixes
-    return "c."
-
-
 intents = discord.Intents.default()
+testing_guilds = (
+    map(int, os.environ["TESTING_GUILDS"].split(","))
+    if "--debug" in sys.argv
+    else None
+)
 bot = commands.Bot(
-    command_prefix=get_prefix,
     description=(
         "I am a bot that will censor most (if not all) bad words in your "
         "sentences without deleting your messages."
     ),
-    help_command=PrettyHelp(color=discord.Color.red()),
     intents=intents,
 )
 
@@ -32,6 +30,18 @@ bot = commands.Bot(
 async def on_ready():
     guild_count = len(bot.guilds)
     print(f"Logged in as {bot.user} in {guild_count} guilds")
+
+
+@bot.slash_command()
+async def invite(ctx: discord.ApplicationContext):
+    invite_url = "https://discord.com/api/oauth2/authorize?client_id=871480702640726077&permissions=105763578896&scope=bot%20applications.commands"
+    invite_embed = discord.Embed(
+        title="Invite Cenzer to your server",
+        description="Thank you for spreading the word",
+        url=invite_url,
+        color=discord.Color.red(),
+    )
+    await ctx.respond(embed=invite_embed)
 
 
 def load_cogs():
