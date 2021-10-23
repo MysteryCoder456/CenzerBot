@@ -49,19 +49,22 @@ class Filter(commands.Cog):
         match options.censor_mode:
             # Replacing profanities with the censor character
             case CensorMode.normal:
-                channel_webhook = await self.get_channel_webhook(channel)
                 clean_sentence_list = []
                 contains_profanity = False
 
                 for word in message.content.split():
                     clean_word = word
+
                     for profanity in self.profanity_words:
                         if profanity in word.lower():
                             contains_profanity = True
                             clean_word = options.censor_char * len(word)
+                            break
+
                     clean_sentence_list.append(clean_word)
 
                 if contains_profanity:
+                    channel_webhook = await self.get_channel_webhook(channel)
                     clean_sentence = " ".join(clean_sentence_list)
                     name = message.author.display_name
                     avatar = message.author.avatar_url  # type: ignore
@@ -90,8 +93,33 @@ class Filter(commands.Cog):
 
             # Wrap profanities in spoiler tags
             case CensorMode.spoiler:
-                # TODO: Make this
-                pass
+                clean_sentence_list = []
+                contains_profanity = False
+                no_spoiler_content: str = message.content.replace("||", "")
+
+                for word in no_spoiler_content.split():
+                    clean_word = word
+
+                    for profanity in self.profanity_words:
+                        if profanity in word.lower():
+                            contains_profanity = True
+                            clean_word = f"||{word}||"
+                            break
+
+                    clean_sentence_list.append(clean_word)
+
+                if contains_profanity:
+                    channel_webhook = await self.get_channel_webhook(channel)
+                    clean_sentence = " ".join(clean_sentence_list)
+                    name = message.author.display_name
+                    avatar = message.author.avatar_url  # type: ignore
+
+                    await message.delete()
+                    await channel_webhook.send(
+                        clean_sentence,
+                        username=name,
+                        avatar_url=avatar,
+                    )
 
 
 def setup(bot: commands.Bot):

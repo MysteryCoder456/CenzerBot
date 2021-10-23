@@ -14,7 +14,6 @@ def get_prefix(client: commands.Bot, message: discord.Message) -> str:
 
 
 intents = discord.Intents.default()
-intents.members = True
 bot = commands.Bot(
     command_prefix=get_prefix,
     description=(
