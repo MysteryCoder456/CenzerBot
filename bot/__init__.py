@@ -13,7 +13,7 @@ TOKEN = os.environ["TOKEN"]
 
 intents = discord.Intents.default()
 testing_guilds = (
-    map(int, os.environ["TESTING_GUILDS"].split(","))
+    list(map(int, os.environ["TESTING_GUILDS"].split(",")))
     if "--debug" in sys.argv
     else None
 )
@@ -32,8 +32,12 @@ async def on_ready():
     print(f"Logged in as {bot.user} in {guild_count} guilds")
 
 
-@bot.slash_command()
+@bot.slash_command(guild_ids=testing_guilds)
 async def invite(ctx: discord.ApplicationContext):
+    """
+    Get Cenzer's invite link
+    """
+
     invite_url = "https://discord.com/api/oauth2/authorize?client_id=871480702640726077&permissions=105763578896&scope=bot%20applications.commands"
     invite_embed = discord.Embed(
         title="Invite Cenzer to your server",

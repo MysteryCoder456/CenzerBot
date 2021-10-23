@@ -67,7 +67,7 @@ class Filter(commands.Cog):
                     channel_webhook = await self.get_channel_webhook(channel)
                     clean_sentence = " ".join(clean_sentence_list)
                     name = message.author.display_name
-                    avatar = message.author.avatar_url
+                    avatar = message.author.display_avatar
 
                     await message.delete()
                     await channel_webhook.send(
@@ -112,7 +112,7 @@ class Filter(commands.Cog):
                     channel_webhook = await self.get_channel_webhook(channel)
                     clean_sentence = " ".join(clean_sentence_list)
                     name = message.author.display_name
-                    avatar = message.author.avatar_url
+                    avatar = message.author.display_avatar
 
                     await message.delete()
                     await channel_webhook.send(
