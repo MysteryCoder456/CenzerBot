@@ -1,4 +1,5 @@
 import discord
+from discord.commands import Option
 from discord.ext import commands
 
 from bot import db, testing_guilds
@@ -44,6 +45,26 @@ class GuildOptions(commands.Cog):
 
         await db.set_guild_option(ctx.guild.id, "censor_char", character)
         await ctx.respond(f"Censor character has been set to {character}")
+
+    @commands.slash_command(name="mode", guild_ids=testing_guilds)
+    @commands.has_guild_permissions(manage_messages=True)
+    async def set_censor_mode(
+        self,
+        ctx: discord.ApplicationContext,
+        mode: Option(
+            str,
+            "Censor Method",
+            choices=[m.name for m in CensorMode],
+        ),
+    ):
+        """
+        Set the method of censoring
+        """
+
+        await db.set_guild_option(ctx.guild.id, "censor_mode", mode)
+        await ctx.respond(
+            f"Censor mode has been set to **{mode}**\n{CensorMode[mode].value}"
+        )
 
 
 def setup(bot: commands.Bot):

@@ -17,7 +17,7 @@ class Options(Base):
     censor_mode = Column(
         "censor_mode",
         Enum(CensorMode),
-        default=CensorMode.normal,
+        default=CensorMode.NORMAL,
         nullable=False,
     )
     whitelist = Column("whitelist", JSON, default=[], nullable=False)

@@ -48,7 +48,7 @@ class Filter(commands.Cog):
 
         match options.censor_mode:
             # Replacing profanities with the censor character
-            case CensorMode.normal:
+            case CensorMode.NORMAL:
                 clean_sentence_list = []
                 contains_profanity = False
 
@@ -77,7 +77,7 @@ class Filter(commands.Cog):
                     )
 
             # Deleting messages that contain any profanities
-            case CensorMode.delete:
+            case CensorMode.DELETE:
                 contains_profanity = False
 
                 for word in message.content.split():
@@ -92,7 +92,7 @@ class Filter(commands.Cog):
                     await message.delete()
 
             # Wrap profanities in spoiler tags
-            case CensorMode.spoiler:
+            case CensorMode.SPOILER:
                 clean_sentence_list = []
                 contains_profanity = False
                 no_spoiler_content: str = message.content.replace("||", "")

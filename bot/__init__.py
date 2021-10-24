@@ -10,7 +10,6 @@ from bot import db
 load_dotenv()
 TOKEN = os.environ["TOKEN"]
 
-
 intents = discord.Intents.default()
 testing_guilds = (
     list(map(int, os.environ["TESTING_GUILDS"].split(",")))
