@@ -62,9 +62,12 @@ class GuildOptions(commands.Cog):
         """
 
         await db.set_guild_option(ctx.guild.id, "censor_mode", mode)
-        await ctx.respond(
-            f"Censor mode has been set to **{mode}**\n{CensorMode[mode].value}"
+        mode_embed = discord.Embed(
+            title=f"Censor Mode: {mode.capitalize()}",
+            color=discord.Color.red(),
+            description=f"{CensorMode[mode].value}",
         )
+        await ctx.respond(embed=mode_embed)
 
 
 def setup(bot: commands.Bot):
