@@ -1,5 +1,4 @@
 git+https://github.com/Pycord-Development/pycord.git  # Pycord 2.0.0a
-discord-ext-prettyhelp
 python-dotenv
 sqlalchemy[asyncio]
 requests
