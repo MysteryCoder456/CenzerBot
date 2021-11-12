@@ -11,6 +11,7 @@ load_dotenv()
 TOKEN = os.environ["TOKEN"]
 
 intents = discord.Intents.default()
+intents.messages = True
 testing_guilds = (
     list(map(int, os.environ["TESTING_GUILDS"].split(",")))
     if "--debug" in sys.argv
