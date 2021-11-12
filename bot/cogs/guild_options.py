@@ -53,7 +53,6 @@ class GuildOptions(commands.Cog):
         ctx: discord.ApplicationContext,
         mode: Option(
             str,
-            "Censor Method",
             choices=[m.name for m in CensorMode],
         ),
     ):
