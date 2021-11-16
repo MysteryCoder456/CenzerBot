@@ -48,6 +48,16 @@ async def invite(ctx: discord.ApplicationContext):
     await ctx.respond(embed=invite_embed)
 
 
+@bot.slash_command(guild_ids=testing_guilds)
+async def ping(ctx: discord.ApplicationContext):
+    """
+    Check Cenzer's API latency
+    """
+
+    latency_ms = round(bot.latency * 1000)
+    await ctx.respond(f"Pong! Latency is {latency_ms} ms")
+
+
 def load_commands():
     commands_dir = ["bot", "commands"]
     commands_module = ".".join(commands_dir)
