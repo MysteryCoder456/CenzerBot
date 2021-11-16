@@ -4,7 +4,7 @@ import enum
 class CensorMode(enum.Enum):
     NORMAL = (
         "This will replace profanities in the message with a "
-        "character set using `/character`"
+        "character set using `/options character`"
     )
     DELETE = "This will delete messages containing any profanities"
     SPOILER = (

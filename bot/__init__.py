@@ -1,8 +1,8 @@
 import os
 import sys
+import importlib
 import asyncio
 import discord
-from discord.ext import commands
 from dotenv import load_dotenv
 
 from bot import db
@@ -17,7 +17,7 @@ testing_guilds = (
     if "--debug" in sys.argv
     else None
 )
-bot = commands.Bot(
+bot = discord.Bot(
     description=(
         "I am a bot that will censor most (if not all) bad words in your "
         "sentences without deleting your messages."
@@ -48,20 +48,21 @@ async def invite(ctx: discord.ApplicationContext):
     await ctx.respond(embed=invite_embed)
 
 
-def load_cogs():
-    for filename in os.listdir("bot/cogs"):
-        if filename.endswith(".py"):
-            cog_name = filename[:-3]
-            bot.load_extension(f"bot.cogs.{cog_name}")
-            print(f"Finished loading {cog_name} cog")
+def load_commands():
+    commands_dir = ["bot", "commands"]
+    commands_module = ".".join(commands_dir)
 
-    print("All cogs loaded!")
+    for filename in os.listdir("/".join(commands_dir)):
+        if filename.endswith(".py"):
+            module_name = filename[:-3]
+            importlib.import_module(f"{commands_module}.{module_name}")
+            print(f"Loaded {module_name} module")
 
 
 def main():
     loop = asyncio.get_event_loop()
     try:
-        load_cogs()
+        load_commands()
         loop.run_until_complete(db.init_tables())
         loop.run_until_complete(bot.start(TOKEN))
     except KeyboardInterrupt:
