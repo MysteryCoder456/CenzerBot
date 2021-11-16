@@ -39,6 +39,14 @@ async def on_message(message: discord.Message):
     guild_id: int = channel.guild.id
     options = await db.get_guild_options(guild_id)
 
+    # Do not check for whitelisted words
+    adjusted_profanities = profanity_words.copy()
+    for whitelisted in options.whitelist:
+        try:
+            adjusted_profanities.remove(whitelisted)
+        except ValueError:
+            pass
+
     if not options.enabled:
         return
 
@@ -51,7 +59,7 @@ async def on_message(message: discord.Message):
             for word in message.content.split():
                 clean_word = word
 
-                for profanity in profanity_words:
+                for profanity in adjusted_profanities:
                     if profanity in word.lower():
                         contains_profanity = True
                         clean_word = options.censor_char * len(word)
@@ -77,7 +85,7 @@ async def on_message(message: discord.Message):
             contains_profanity = False
 
             for word in message.content.split():
-                for profanity in profanity_words:
+                for profanity in adjusted_profanities:
                     if profanity in word.lower():
                         contains_profanity = True
                         break
@@ -96,7 +104,7 @@ async def on_message(message: discord.Message):
             for word in no_spoiler_content.split():
                 clean_word = word
 
-                for profanity in profanity_words:
+                for profanity in adjusted_profanities:
                     if profanity in word.lower():
                         contains_profanity = True
                         clean_word = f"||{word}||"
