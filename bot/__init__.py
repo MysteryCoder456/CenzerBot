@@ -3,6 +3,7 @@ import sys
 import importlib
 import asyncio
 import discord
+from discord.ext import tasks
 from dotenv import load_dotenv
 
 from bot import db
@@ -30,6 +31,16 @@ bot = discord.Bot(
 async def on_ready():
     guild_count = len(bot.guilds)
     print(f"Logged in as {bot.user} in {guild_count} guilds")
+    status_update.start()
+
+
+@tasks.loop(seconds=5)
+async def status_update():
+    guild_count = len(bot.guilds)
+    activity = discord.Game(name=f"Pycord in {guild_count} servers")
+    await bot.change_presence(
+        activity=activity, status=discord.Status.streaming
+    )
 
 
 @bot.slash_command(guild_ids=testing_guilds)
