@@ -73,6 +73,27 @@ async def set_censor_mode(
     await ctx.respond(embed=mode_embed)
 
 
+@whitelist.command(name="show")
+async def whitelist_show(ctx: discord.ApplicationContext):
+    """
+    View the server whitelist
+    """
+
+    guild_whitelist = (await db.get_guild_options(ctx.guild_id)).whitelist
+
+    if guild_whitelist:
+        desc = ""
+        for i, word in enumerate(guild_whitelist):
+            desc += f"{i + 1}) {word}\n"
+    else:
+        desc = "The whitelist is empty :("
+
+    whitelist_embed = discord.Embed(
+        title="Whitelisted Words", color=discord.Color.red(), description=desc
+    )
+    await ctx.respond(embed=whitelist_embed)
+
+
 @whitelist.command(name="add")
 @commands.has_guild_permissions(manage_messages=True)
 async def whitelist_add(ctx: discord.ApplicationContext, word: str):
@@ -81,7 +102,7 @@ async def whitelist_add(ctx: discord.ApplicationContext, word: str):
     """
 
     guild_whitelist = (await db.get_guild_options(ctx.guild_id)).whitelist
-    word = word.replace("`", "")
+    word = word.replace("`", "").strip()
 
     if word in guild_whitelist:
         await ctx.respond(f"`{word}` is already added to the whitelist")
