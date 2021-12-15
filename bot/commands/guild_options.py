@@ -5,11 +5,11 @@ from discord.ext import commands
 from bot import bot, db, testing_guilds
 from bot.enums import CensorMode
 
-options = bot.command_group(
+options = bot.create_group(
     "options", "Change bot settings for your server", guild_ids=testing_guilds
 )
 
-whitelist = options.command_group(
+whitelist = options.create_subgroup(
     "whitelist", "Set certain words to be ignored by the censoring engine"
 )
 
