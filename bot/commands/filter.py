@@ -7,8 +7,7 @@ from bot.enums import CensorMode
 
 # Fetch profanity list
 words_request = requests.get(
-    "https://github.com/RobertJGabriel/Google-profanity-words"
-    "/raw/master/list.txt"
+    "https://raw.githubusercontent.com/coffee-and-fun/google-profanity-words/main/data/list.txt"
 )
 profanity_words = words_request.text.splitlines()
 print("Fetched profanities 😉")
